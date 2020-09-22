@@ -1,0 +1,30 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+    <title>Vanilla Minesweeper</title>
+    <meta name="description" content="Minesweeper built with vanilla JS">
+    <meta name="author" content="Alex Paxton">
+
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@200;400;700&display=swap" rel="stylesheet">
+  </head>
+
+  <body>
+    <h1>Minesweeper</h1>
+    <nav>
+      <button type="button" class="button" id="view-high-scores">High Scores</button>
+      <button type="button" class="button" id="start-new-game">New Game</button>
+    </nav>
+    <div class="page-container">
+      <div class="page-header">
+        <div class="game-timer" id="game-timer">0</div>
+        <div class="game-status" id="game-status">😎</div>
+      </div>
+      <div class="game-container" id="game-container"></div>
+    </div>
+    <script src="minesweeper.js"></script>
+  </body>
+</html>
