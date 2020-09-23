@@ -91,7 +91,8 @@ const loadFromLocalStorage = () => {
       minefield: {
         squares: [],
       },
-      status: 'initial'
+      status: 'initial',
+      timer: 0,
     }
   }
 
@@ -103,6 +104,19 @@ const saveGameStatus = (status) => {
   data['status'] = status
 
   localStorage.setItem(localStorageKey, JSON.stringify(data))
+}
+
+const saveTime = () => {
+  const data = loadFromLocalStorage()
+  data['time'] = gameTime
+
+  localStorage.setItem(localStorageKey, JSON.stringify(data))
+}
+
+const loadTime = () => {
+  const data = loadFromLocalStorage()
+  
+  return data.time
 }
 
 const saveMinefield = () => {
@@ -144,13 +158,14 @@ const shuffleArray = (array) => {
   return shuffledArray
 }
 
-const incrementTimer = () => {
+const incrementGameTime = () => {
   gameTime ++
   timerElement.innerText = `${gameTime}`
+  saveTime()
 }
 
 const startTimer = () => {
-  gameTimer = setInterval(incrementTimer, 1000)
+  gameTimer = setInterval(incrementGameTime, 1000)
 }
 
 const stopTimer = () => {
@@ -190,6 +205,14 @@ const handleSetupNewGame = () => {
   resetTimer()
   clearGameContainer()
   displayNewGameOptions()
+}
+
+const handleResumeGame = ({minefield, status, time}) => {
+  currentMinefield = minefield
+  gameStatus = status
+  gameTime = time
+  startTimer()
+  displayMinefield()
 }
 
 const handleStartGame = () => {
@@ -489,9 +512,7 @@ const initalize = () => {
   const {minefield, status} = data
 
   if (minefield.squares.length && status === 'initial') {
-    currentMinefield = minefield
-    gameStatus = status
-    displayMinefield()
+    handleResumeGame(data)
   } else {
     handleSetupNewGame()
   }
