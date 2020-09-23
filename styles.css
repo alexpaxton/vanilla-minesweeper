@@ -81,6 +81,7 @@ nav .button {
 
 .game-status {
   text-align: right;
+  font-size: 1.5em;
 }
 
 .game-timer {
@@ -163,10 +164,6 @@ nav .button {
   position: absolute;
 }
 
-.difficulty-summary .square:hover {
-  cursor: default;
-}
-
 .difficulty-summary .square:nth-child(1) {
   top: 0;
   left: 0;
@@ -196,6 +193,17 @@ nav .button {
   position: relative;
 }
 
+.minefield:after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  bottom: -1px;
+  left: -1px;
+  border: 1px solid #1d1d1d;
+  pointer-events: none;
+}
+
 .square {
   position: absolute;
   border-width: 2px;
@@ -216,13 +224,37 @@ nav .button {
   border-left-color: #222;
 }
 
-.square__hidden:hover {
+.square__clickable:hover {
+  background-color: #555;
+  border-top-color: #777;
+  border-right-color: #666;
+  border-bottom-color: #333;
+  border-left-color: #444;
   cursor: pointer;
 }
 
 .square__revealed {
   background-color: #222;
-  border-color: #222;
+  border-color: #1d1d1d;
+  border-width: 1px;
+}
+
+.square__has-mine {
+  border-width: 2px;
+  background-color: #FF00FF;
+  border-top-color: #ff9efd;
+  border-right-color: #ff60fe;
+  border-bottom-color: #8a00b4;
+  border-left-color: #c500d4;
+}
+
+.square__flagged {
+  border-width: 2px;
+  background-color: #004fbd;
+  border-top-color: #0b8de8;
+  border-right-color: #0068cc;
+  border-bottom-color: #113486;
+  border-left-color: #0d3d9f;
 }
 
 .square-one {
@@ -230,11 +262,13 @@ nav .button {
 }
 
 .square-two {
-  color: #20DFF4;
+  color: #609FF7;
+  /* color: #20DFF4; */
 }
 
 .square-three {
-  color: #40BFF5;
+  color: #9F60FA;
+  /* color: #40BFF5; */
 }
 
 .square-four {

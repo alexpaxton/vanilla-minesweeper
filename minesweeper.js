@@ -185,7 +185,6 @@ const getAdjacentSquares = (id, squares) => {
   ------------------------------------------------------------------------------
 */
 
-
 const handleSetupNewGame = () => {
   stopTimer()
   resetTimer()
@@ -365,8 +364,15 @@ const displayMinefield = () => {
   squares.forEach(square => {
     const left = square.x * squareSize
     const top = square.y * squareSize
+    const classNames = ['square']
+    classNames.push(`square__${square.revealed ? 'revealed' : 'hidden'}`)
+    classNames.push(`square-${squareColors[square.adjacent]}`)
+    classNames.push(`${!square.revealed && !square.flag && gameStatus === 'initial' ? 'square__clickable' : ''}`)
+    classNames.push(`${square.revealed && square.mine ? 'square__has-mine' : ''}`)
+    classNames.push(`${square.flag ? 'square__flagged' : ''}`)
+
     const squareElement = createElement('div', {
-      class: `square square__${square.revealed ? 'revealed' : 'hidden'} square-${squareColors[square.adjacent]}`,
+      class: classNames.join(' '),
       style: `width: ${squareSize}px; height: ${squareSize}px; top: ${top}px; left: ${left}px;`,
       id: square.index,
     })
@@ -484,6 +490,7 @@ const initalize = () => {
 
   if (minefield.squares.length && status === 'initial') {
     currentMinefield = minefield
+    gameStatus = status
     displayMinefield()
   } else {
     handleSetupNewGame()
