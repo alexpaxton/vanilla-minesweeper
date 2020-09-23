@@ -511,7 +511,9 @@ const initalize = () => {
   const data = loadFromLocalStorage()
   const {minefield, status} = data
 
-  if (minefield.squares.length && status === 'initial') {
+  const gameIsInProgress = minefield.squares.length && status === 'initial'
+
+  if (gameIsInProgress) {
     handleResumeGame(data)
   } else {
     handleSetupNewGame()
