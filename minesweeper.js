@@ -464,6 +464,8 @@ const handleSquareClick = (e) => {
 
   handleCascadingReveal(id)
 
+  checkVictoryConditions()
+
   // Redraw minefield
   displayMinefield()
 }
@@ -481,6 +483,7 @@ const handleSquareRightClick = (e) => {
     currentMinefield.squares[id].flag = false
   } else {
     currentMinefield.squares[id].flag = true
+    checkVictoryConditions()
   }
 
   // Redraw minefield
@@ -492,6 +495,25 @@ const handleGameOver = () => {
   timerElement.innerText = 'Game Over!'
   statusElement.innerText = '🤯'
   gameStatus = 'gameover'
+  saveGameStatus(gameStatus)
+}
+
+const checkVictoryConditions = () => {
+  const {squares} = currentMinefield
+  const noUnflaggedHiddenSquares = squares.filter(square => square.revealed === false && square.flag === false).length === 0
+  const mines = squares.filter(square => square.mine)
+  const flaggedMines = mines.filter(square => square.flag)
+
+  if (mines.length === flaggedMines.length && noUnflaggedHiddenSquares) {
+    handleVictory()
+  }
+}
+
+const handleVictory = () => {
+  stopTimer()
+  timerElement.innerText = 'Victory!'
+  statusElement.innerText = '🥳'
+  gameStatus = 'victory'
   saveGameStatus(gameStatus)
 }
 
