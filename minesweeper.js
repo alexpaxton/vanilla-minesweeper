@@ -212,7 +212,8 @@ const handleResumeGame = ({minefield, status, time}) => {
   gameStatus = status
   gameTime = time
   startTimer()
-  displayMinefield()
+  drawMinefield()
+  updateMinefieldDrawing()
 }
 
 const handleStartGame = () => {
@@ -221,7 +222,8 @@ const handleStartGame = () => {
   gameStatus = 'initial'
   saveGameStatus('initial')
   startTimer()
-  displayMinefield()
+  drawMinefield()
+  updateMinefieldDrawing()
 }
 
 const handleSetDifficulty = (e) => {
@@ -374,7 +376,7 @@ const calculateSquareText = (square) => {
   return ''
 }
 
-const displayMinefield = () => {
+const drawMinefield = () => {
   clearGameContainer()
   const {width, height, squares} = currentMinefield
   const pxWidth = width * squareSize
@@ -387,20 +389,11 @@ const displayMinefield = () => {
   squares.forEach(square => {
     const left = square.x * squareSize
     const top = square.y * squareSize
-    const classNames = ['square']
-    classNames.push(`square__${square.revealed ? 'revealed' : 'hidden'}`)
-    classNames.push(`square-${squareColors[square.adjacent]}`)
-    classNames.push(`${!square.revealed && !square.flag && gameStatus === 'initial' ? 'square__clickable' : ''}`)
-    classNames.push(`${square.revealed && square.mine ? 'square__has-mine' : ''}`)
-    classNames.push(`${square.flag ? 'square__flagged' : ''}`)
 
     const squareElement = createElement('div', {
-      class: classNames.join(' '),
       style: `width: ${squareSize}px; height: ${squareSize}px; top: ${top}px; left: ${left}px;`,
-      id: square.index,
+      id: `square-${square.index}`,
     })
-
-    squareElement.innerText = calculateSquareText(square)
 
     if (gameStatus === 'initial') {
       squareElement.addEventListener('click', handleSquareClick)
@@ -411,6 +404,28 @@ const displayMinefield = () => {
   })
 
   gameContainer.appendChild(minefield)
+
+  // Persist minefield to local storage
+  saveMinefield()
+}
+
+const updateMinefieldDrawing = () => {
+  const {squares} = currentMinefield
+
+  squares.forEach(square => {
+    const squareElement = document.getElementById(`square-${square.index}`)
+
+    const classNames = ['square']
+    classNames.push(`square__${square.revealed ? 'revealed' : 'hidden'}`)
+    classNames.push(`square-${squareColors[square.adjacent]}`)
+    classNames.push(`${!square.revealed && !square.flag && gameStatus === 'initial' ? 'square__clickable' : ''}`)
+    classNames.push(`${square.revealed && square.mine ? 'square__has-mine' : ''}`)
+    classNames.push(`${square.flag ? 'square__flagged' : ''}`)
+
+    squareElement.setAttribute('class', classNames.join(' '))
+
+    squareElement.innerHTML = calculateSquareText(square)
+  })
 
   // Persist minefield to local storage
   saveMinefield()
@@ -451,9 +466,14 @@ const handleCascadingReveal = (id) => {
 }
 
 const handleSquareClick = (e) => {
-  // currentMinefield = loadMinefield()
+  // ID is stored as "square-000" format,
+  // Need to remove everything but the number so it can be parsed
+  const id = parseInt(e.target.getAttribute('id').replace(/[\D]/g, ''))
 
-  const id = parseInt(e.target.getAttribute('id'))
+  if (!id) {
+    console.error('Could not look up square from ID', id)
+  }
+
   const square = currentMinefield.squares[id]
 
   if (square.revealed || square.flag) {
@@ -463,11 +483,8 @@ const handleSquareClick = (e) => {
   }
 
   handleCascadingReveal(id)
-
   checkVictoryConditions()
-
-  // Redraw minefield
-  displayMinefield()
+  updateMinefieldDrawing()
 }
 
 const handleSquareRightClick = (e) => {
@@ -483,19 +500,10 @@ const handleSquareRightClick = (e) => {
     currentMinefield.squares[id].flag = false
   } else {
     currentMinefield.squares[id].flag = true
-    checkVictoryConditions()
   }
 
-  // Redraw minefield
-  displayMinefield()
-}
-
-const handleGameOver = () => {
-  stopTimer()
-  timerElement.innerText = 'Game Over!'
-  statusElement.innerText = '🤯'
-  gameStatus = 'gameover'
-  saveGameStatus(gameStatus)
+  checkVictoryConditions()
+  updateMinefieldDrawing()
 }
 
 const checkVictoryConditions = () => {
@@ -514,6 +522,14 @@ const handleVictory = () => {
   timerElement.innerText = 'Victory!'
   statusElement.innerText = '🥳'
   gameStatus = 'victory'
+  saveGameStatus(gameStatus)
+}
+
+const handleGameOver = () => {
+  stopTimer()
+  timerElement.innerText = 'Game Over!'
+  statusElement.innerText = '🤯'
+  gameStatus = 'gameover'
   saveGameStatus(gameStatus)
 }
 
