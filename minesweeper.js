@@ -368,6 +368,16 @@ const calculateSquareText = (square) => {
   return ''
 }
 
+const disableMinefield = () => {
+  const {squares} = currentMinefield
+
+  squares.forEach(square => {
+    const element = document.getElementById(`square-${square.index}`)
+    element.removeEventListener('click', handleSquareClick)
+    element.removeEventListener('contextmenu', handleSquareRightClick)
+  })
+}
+
 const drawMinefield = () => {
   clearGameContainer()
   const {width, height, squares} = currentMinefield
@@ -431,7 +441,7 @@ const handleCascadingReveal = (id) => {
     const prevLength = revealedIDs.length
     revealedIDs.forEach(revealedSquareID => {
       const adjacentSquares = getAdjacentSquares(revealedSquareID, currentMinefield.squares)
-      const allAdjacentSquaresAreMineFree = adjacentSquares.filter(square => !square.mine).length === adjacentSquares.length
+      const allAdjacentSquaresAreMineFree = adjacentSquares.every(square => !square.mine)
 
       if (allAdjacentSquaresAreMineFree) {
         adjacentSquares.forEach(square => {
@@ -511,6 +521,7 @@ const checkVictoryConditions = () => {
 
 const handleVictory = () => {
   stopTimer()
+  disableMinefield()
   timerElement.innerText = 'Victory!'
   statusElement.innerText = '🥳'
   gameStatus = 'victory'
@@ -519,6 +530,7 @@ const handleVictory = () => {
 
 const handleGameOver = () => {
   stopTimer()
+  disableMinefield()
   timerElement.innerText = 'Game Over!'
   statusElement.innerText = '🤯'
   gameStatus = 'gameover'
