@@ -434,6 +434,7 @@ const updateMinefieldDrawing = () => {
 }
 
 const handleCascadingReveal = (id) => {
+  // Using Set because it only stores unique values
   let squaresToReveal = new Set
   squaresToReveal.add(id)
   let cascading = true
@@ -457,7 +458,7 @@ const handleCascadingReveal = (id) => {
     }
   }
 
-  // Update squares
+  // Reveal queued sqaures
   squaresToReveal.forEach(id => {
     currentMinefield.squares[id].flag = false
     currentMinefield.squares[id].revealed = true
