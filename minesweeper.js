@@ -434,26 +434,23 @@ const updateMinefieldDrawing = () => {
 }
 
 const handleCascadingReveal = (id) => {
-  let revealedIDs = [id]
+  let squaresToReveal = new Set
+  squaresToReveal.add(id)
   let cascading = true
 
   while (cascading === true) {
-    const prevLength = revealedIDs.length
-    revealedIDs.forEach(revealedSquareID => {
+    const prevLength = squaresToReveal.size
+    squaresToReveal.forEach(revealedSquareID => {
       const adjacentSquares = getAdjacentSquares(revealedSquareID, currentMinefield.squares)
       const allAdjacentSquaresAreMineFree = adjacentSquares.every(square => !square.mine)
 
       if (allAdjacentSquaresAreMineFree) {
         adjacentSquares.forEach(square => {
-          const squareNotInList = !revealedIDs.includes(square.index)
-
-          if (squareNotInList) {
-            revealedIDs.push(square.index)
-          }
+          squaresToReveal.add(square.index)
         })
       }
     })
-    const nextLength = revealedIDs.length
+    const nextLength = squaresToReveal.size
 
     if (prevLength === nextLength) {
       cascading = false
@@ -461,7 +458,7 @@ const handleCascadingReveal = (id) => {
   }
 
   // Update squares
-  revealedIDs.forEach(id => {
+  squaresToReveal.forEach(id => {
     currentMinefield.squares[id].flag = false
     currentMinefield.squares[id].revealed = true
   })
